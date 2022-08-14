@@ -1,0 +1,122 @@
+version: "3"
+
+networks:
+  kafka-cluster:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    hostname: zookeeper
+    ports:
+      - '2181:2181'
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_OPTS: -Dzookeeper.authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider -DrequireClientAuthScheme=sasl -Djava.security.auth.login.config=/etc/kafka/conf/zookeeper_jaas.conf
+    networks:
+     - kafka-cluster
+    volumes:
+      - ./conf:/etc/kafka/conf
+  kafka1:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka1
+    hostname: kafka1
+    ports:
+      - '9093:9093'
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: SASL_PLAINTEXT://kafka1:9093
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_PLAINTEXT
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_SSL_CLIENT_AUTH: none
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_SUPER_USERS: "User:admin"
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "false"
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.auth.SimpleAclAuthorizer
+      KAFKA_ZOOKEEPER_SET_ACL: "true"
+      # KAFKA_SSL_KEYSTORE_FILENAME: kafka.keystore.jks
+      # KAFKA_SSL_KEYSTORE_CREDENTIALS: cert_creds
+      # KAFKA_SSL_KEY_CREDENTIALS: cert_creds
+      # KAFKA_SSL_TRUSTSTORE_FILENAME: kafka.truststore.jks
+      # KAFKA_SSL_TRUSTSTORE_CREDENTIALS: cert_creds
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_OPTS: -Dzookeeper.sasl.client=true -Dzookeeper.sasl.clientconfig=Client -Djava.security.auth.login.config=/etc/kafka/conf/broker_jaas.conf
+    depends_on:
+      - zookeeper
+    networks:
+      - kafka-cluster
+    volumes:
+      - ./conf:/etc/kafka/conf
+  kafka2:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka2
+    hostname: kafka2
+    ports:
+      - '9094:9094'
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: SASL_PLAINTEXT://kafka2:9094
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_PLAINTEXT
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_SSL_CLIENT_AUTH: none
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_SUPER_USERS: "User:admin"
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "false"
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.auth.SimpleAclAuthorizer
+      KAFKA_ZOOKEEPER_SET_ACL: "true"
+      # KAFKA_SSL_KEYSTORE_FILENAME: kafka.keystore.jks
+      # KAFKA_SSL_KEYSTORE_CREDENTIALS: cert_creds
+      # KAFKA_SSL_KEY_CREDENTIALS: cert_creds
+      # KAFKA_SSL_TRUSTSTORE_FILENAME: kafka.truststore.jks
+      # KAFKA_SSL_TRUSTSTORE_CREDENTIALS: cert_creds
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_OPTS: -Dzookeeper.sasl.client=true -Dzookeeper.sasl.clientconfig=Client -Djava.security.auth.login.config=/etc/kafka/conf/broker_jaas.conf
+    depends_on:
+      - zookeeper
+    networks:
+     -  kafka-cluster
+    volumes:
+      - ./conf:/etc/kafka/conf
+  kafka3:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka3
+    hostname: kafka3
+    ports:
+      - '9095:9095'
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: SASL_PLAINTEXT://kafka3:9095
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_PLAINTEXT
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_SSL_CLIENT_AUTH: none
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      KAFKA_SUPER_USERS: "User:admin"
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "false"
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.auth.SimpleAclAuthorizer
+      KAFKA_ZOOKEEPER_SET_ACL: "true"
+      # KAFKA_SSL_KEYSTORE_FILENAME: kafka.keystore.jks
+      # KAFKA_SSL_KEYSTORE_CREDENTIALS: cert_creds
+      # KAFKA_SSL_KEY_CREDENTIALS: cert_creds
+      # KAFKA_SSL_TRUSTSTORE_FILENAME: kafka.truststore.jks
+      # KAFKA_SSL_TRUSTSTORE_CREDENTIALS: cert_creds
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_OPTS: -Dzookeeper.sasl.client=true -Dzookeeper.sasl.clientconfig=Client -Djava.security.auth.login.config=/etc/kafka/conf/broker_jaas.conf
+    depends_on:
+      - zookeeper
+    networks:
+      - kafka-cluster
+    volumes:
+      - ./conf:/etc/kafka/conf
